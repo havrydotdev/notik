@@ -1,0 +1,37 @@
+{
+  "name": "bank-atm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/polyfill": "^7.2.5",
+    "buefy": "^0.9.23",
+    "css-loader": "^3.6.0",
+    "html-entities": "^1.4.0",
+    "vue": "^2.5.17",
+    "vue-notification": "^1.3.20",
+    "vue-resource": "^1.5.1",
+    "vue-router": "^3.0.2",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.5.17",
+    "vuex": "^3.0.1",
+    "webpack-hot-middleware": "^2.0.0"
+  },
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@mdi/font": "^7.1.96",
+    "babel-loader": "^8.0.2",
+    "deepmerge": "^4.3.0",
+    "sass": "~1.32",
+    "sass-loader": "^13.2.0",
+    "vue-loader": "^15.4.1",
+    "vue-template-loader": "^1.1.0",
+    "webpack": "4.17.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.7"
+  }
+}

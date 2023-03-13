@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta charset="UTF-8">
+    <title>Notik</title>
+    <script th:inline="javascript">
+        const profile = [[${user}]]
+        const notes = [[${notes}]]
+    </script>
+</head>
+<body>
+<div id="app"></div>
+</body>
+<script th:src="${isDev} ? 'http://localhost:8000/main.js' : '/js/main.js'"></script>
+</html>
