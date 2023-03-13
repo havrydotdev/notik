@@ -1,11 +1,9 @@
 <template>
-  <v-app v-if="profile !== null && notes !== null">
-    <v-container>
-      <note-form/>
-      <note-card v-for="note in this.sortedPosts"
-                 :note="note"/>
-    </v-container>
-  </v-app>
+  <div class="container" v-if="profile !== null">
+    <note-form/>
+    <note-card v-for="note in this.sortedPosts"
+               :note="note"/>
+  </div>
 </template>
 
 <script>

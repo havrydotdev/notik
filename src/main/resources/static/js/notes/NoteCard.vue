@@ -64,11 +64,11 @@ export default {
       let days = Math.round(millis / 86400000)
       let hours = Math.round(millis / 3600000)
       let minutes = Math.round(millis / 60000)
-      if (days > 1) {
-        return 'Created ' + (days === 1 ? ' day' : ' days') + " ago"
-      } else if (hours > 1) {
+      if (days >= 1) {
+        return 'Created ' + days + (days === 1 ? ' day' : ' days') + " ago"
+      } else if (hours >= 1) {
         return 'Created ' + hours + (hours === 1 ? ' hour' : ' hours') + ' ago'
-      } else if (minutes > 1) {
+      } else if (minutes >= 1) {
         return 'Created ' + minutes + (minutes === 1 ? ' minute' : ' minutes') + ' ago'
       } else {
         return "Created few seconds ago"

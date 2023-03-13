@@ -64,10 +64,6 @@ export default {
               type: 'error'
             })
           } else {
-            Vue.notify({
-              title: 'Authorization',
-              text: 'You have been logged in!'
-            })
             window.location.reload()
           }
         })
