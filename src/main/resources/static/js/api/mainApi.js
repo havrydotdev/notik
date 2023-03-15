@@ -3,8 +3,10 @@ import VueResource from "vue-resource";
 
 Vue.use(VueResource)
 
+const notes = Vue.resource('/notes{/id}')
+
 export default {
-    addNote(title, text) {
-        Vue.http.post('/notes', {title: title, body: text})
-    }
+    add: note => notes.save({}, note),
+    remove: id => notes.remove({id: id}),
+    edit: note => notes.update({id: note.id}, note)
 }

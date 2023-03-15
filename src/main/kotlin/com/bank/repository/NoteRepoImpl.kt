@@ -11,7 +11,8 @@ class NoteRepoImpl : NoteRepo {
         title = row[Notes.title],
         body = row[Notes.body],
         creationDate = row[Notes.creationDate],
-        userId = row[Notes.userId].value
+        userId = row[Notes.userId].value,
+        isImportant = row[Notes.isImportant]
     )
 
     override suspend fun allNotes(): List<Note> = dbQuery {
@@ -30,6 +31,7 @@ class NoteRepoImpl : NoteRepo {
             it[title] = map["title"]!!
             it[body] = map["body"]!!
             it[creationDate] = System.currentTimeMillis()
+            it[isImportant] = map["isImportant"]!!.toBoolean()
             it[Notes.userId] = userId
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToNote)
@@ -39,6 +41,7 @@ class NoteRepoImpl : NoteRepo {
         Notes.update({ Notes.id eq note.id }) {
             it[title] = note.title
             it[body] = note.body
+            it[isImportant] = note.isImportant
         } > 0
     }
 

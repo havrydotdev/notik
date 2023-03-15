@@ -1,6 +1,8 @@
 package com.bank.routes
 
-import com.bank.models.*
+import com.bank.models.JsonError
+import com.bank.models.Note
+import com.bank.models.User
 import com.bank.repository.NoteRepo
 import com.bank.repository.NoteRepoImpl
 import com.bank.repository.UserRepo
@@ -13,7 +15,6 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import io.ktor.server.util.*
-import kotlinx.coroutines.runBlocking
 import java.util.regex.Pattern
 
 fun Application.configureRouting() {
@@ -48,13 +49,12 @@ fun Route.crudOperations() {
             val id = call.parameters.getOrFail<Int>("id").toInt()
             val dto = call.receive<Note>()
             dao.editNote(dto)
-            call.respondRedirect("/notes/$id")
+            call.respond(dao.note(id)!!)
         }
 
         delete("/{id}") {
             val id = call.parameters.getOrFail<Int>("id").toInt()
             dao.deleteNote(id)
-            call.respondRedirect("/notes")
         }
     }
 }

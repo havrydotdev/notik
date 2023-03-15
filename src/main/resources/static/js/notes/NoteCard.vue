@@ -1,64 +1,57 @@
 <template>
-  <v-card
-      class="mx-auto"
-      max-width="344"
-  >
-    <v-card-text>
-      <div>Regular note</div>
-      <p class="text-h4 text--primary">
-        {{note.title}}
-      </p>
-      <p>{{systemNow()}}</p>
-      <div class="text--primary">
+  <div class="mt-2 mb-5">
+    <div class="box mr-2 ml-2 red" style="height: 250px; width: 300px; cursor: pointer;" v-if="note.isImportant || note.important">
+      <h3 class="title is-4 mb-5">{{note.title}}</h3>
+      <h5 class="subtitle is-6">{{systemNow()}}</h5>
+      <div class="mt-5" style="min-height: 90px">
         {{getBody()}}
       </div>
-    </v-card-text>
-    <v-card-actions>
-      <v-btn
-          text
-          color="teal accent-4"
-          @click="reveal = true"
-      >
-        Read more
-      </v-btn>
-    </v-card-actions>
+      <div style="margin-left: 160px">
+        <b-button type="is-link"
+                  icon-right="file-edit"
+                  @click="prompt()"/>
+        <b-button type="is-danger"
+                  icon-right="delete"
+                  class="ml-1"
+                  @click="deleteCurrent()"/>
+      </div>
+    </div>
 
-    <v-expand-transition>
-      <v-card
-          v-if="reveal"
-          class="transition-fast-in-fast-out v-card--reveal"
-          style="height: 100%;"
-      >
-        <v-card-text class="pb-0">
-          <p class="text-h4 text--primary">
-            {{note.title}}
-          </p>
-          <p>{{note.body}}</p>
-        </v-card-text>
-        <v-card-actions class="pt-0">
-          <v-btn
-              text
-              color="teal accent-4"
-              @click="reveal = false"
-          >
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-expand-transition>
-  </v-card>
+    <div class="box mr-2 ml-2" style="height: 250px; width: 300px; cursor: pointer;" v-else>
+      <h3 class="title is-4 mb-5">{{note.title}}</h3>
+      <h5 class="subtitle is-6">{{systemNow()}}</h5>
+      <div class="mt-5" style="min-height: 90px">
+        {{getBody()}}
+      </div>
+      <div style="margin-left: 160px">
+        <b-button type="is-link"
+                  icon-right="file-edit"
+                  @click="prompt()"/>
+        <b-button type="is-danger"
+                  icon-right="delete"
+                  class="ml-1"
+                  @click="deleteCurrent()"/>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+import {mapActions} from "vuex";
+import FullNote from "../modal/FullNote.vue";
+
 export default {
   name: "NoteCard",
+  components: {FullNote},
   props: ["note"],
   data() {
     return {
-      reveal: false
+      reveal: false,
+      modal: false
     }
   },
   methods: {
+    ...mapActions(['deleteNoteAction', 'editNoteAction']),
     systemNow() {
       const millis = (Date.now() - this.note.creationDate)
       let days = Math.round(millis / 86400000)
@@ -76,20 +69,35 @@ export default {
     },
     getBody() {
       if (this.note.body.length > 40) {
-        return this.note.body.substring(0, 39)
+        return this.note.body.substring(0, 39) + '...'
       } else {
         return this.note.body
       }
+    },
+    deleteCurrent() {
+      this.deleteNoteAction(this.note)
+    },
+    prompt() {
+      this.$buefy.dialog.prompt({
+        message: `Edit note`,
+        inputAttrs: {
+          placeholder: 'Enter here...',
+          maxlength: 300,
+          value: this.note.body
+        },
+        trapFocus: true,
+        onConfirm: (value) => this.editCurrent(value)
+      })
+    },
+    editCurrent(str) {
+      this.editNoteAction({id: this.note.id, title: this.note.title, body: str, userId: this.note.userId, isImportant: `${(this.note.important === undefined || this.note.important === null ? this.note.isImportant : this.note.important)}`, creationDate: this.note.creationDate})
     }
   }
 }
 </script>
 
 <style scoped>
-.v-card--reveal {
-  bottom: 0;
-  opacity: 1 !important;
-  position: absolute;
-  width: 100%;
+.red {
+  background-color: lightgreen;
 }
 </style>

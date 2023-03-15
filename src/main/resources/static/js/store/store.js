@@ -12,7 +12,7 @@ export default new Vuex.Store({
     },
     getters: {
         isValid: state => state.token !== null && state.token !== '' && state.token !== undefined && state.token !== 'undefined',
-        sortedPosts: state => (state.notes || []).sort((a, b) => -(a.id - b.id))
+        allNotes: state => (state.notes || []).sort((a, b) => -(a.id - b.id))
     },
     mutations: {
         addTokenMutation(state, token) {
@@ -22,17 +22,45 @@ export default new Vuex.Store({
             state.profile = profile
         },
         addNotesMutation(state, note) {
+
             state.notes = [
                 ...state.notes, note
+            ]
+        },
+        deleteMessageMutation(state, id) {
+            const deletionIndex = state.notes.findIndex(item => item.id === id)
+
+            if (deletionIndex > -1) {
+                state.notes = [
+                    ...state.notes.slice(0, deletionIndex),
+                    ...state.notes.slice(deletionIndex + 1)
+                ]
+            }
+        },
+        editMessageMutation(state, note) {
+            const updateIndex = state.notes.findIndex(item => item.id === note.id)
+
+            state.notes = [
+                ...state.notes.slice(0, updateIndex),
+                note,
+                ...state.notes.slice(updateIndex + 1)
             ]
         }
     },
     actions: {
-        async addNoteAction({commit, state}, message) {
-            await Vue.http.post('/notes', message).then(result => {
-                const res = result.body
-                commit("addNotesMutation", res)
-            })
+        async addNoteAction({commit, state}, note) {
+             const res = await mainApi.add(note)
+             const final = await res.body
+             setTimeout(commit('addNotesMutation', final), 2000)
+        },
+        async deleteNoteAction({commit, state}, note) {
+            mainApi.remove(note.id)
+            commit('deleteMessageMutation', note.id)
+        },
+        async editNoteAction({commit, state}, note) {
+            const res = await mainApi.edit(note)
+            const final = await res.body
+            commit('editMessageMutation', final)
         }
     }
 })
