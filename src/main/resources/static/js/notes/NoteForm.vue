@@ -7,7 +7,7 @@
         v-model="isOpen">
       <template #trigger>
         <div
-            class="panel-heading is-white"
+            class="panel-heading"
             role="button"
             aria-controls="contentIdForA11y2"
             :aria-expanded="isOpen">
@@ -28,7 +28,7 @@
             <b-checkbox v-model="isImportant"
                         true-value="Yes"
                         false-value="No">
-              {{ isImportant }}
+              {{ isImportant === false ? 'No' : isImportant }}
             </b-checkbox>
           </b-field>
 

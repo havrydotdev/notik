@@ -7,7 +7,8 @@ import com.bank.repository.NoteRepo
 import com.bank.repository.NoteRepoImpl
 import com.bank.repository.UserRepo
 import com.bank.repository.UserRepoImpl
-import com.google.gson.Gson
+import com.bank.utils.checkEmail
+import com.bank.utils.deserializeJson
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -15,51 +16,58 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 import io.ktor.server.util.*
-import java.util.regex.Pattern
+import org.koin.ktor.ext.inject
 
 fun Application.configureRouting() {
     routing {
-        crudOperations()
-        getAuthOperations()
-        get("/") {
-            val principal = call.sessions.get<User>()
-            if (principal !== null) {
-                call.respond(ThymeleafContent("index", mapOf("isDev" to true, "user" to principal, "notes" to dao.getNoteByUser(principal))))
-            } else {
-                call.respond(ThymeleafContent("index", mapOf("isDev" to true)))
-            }
+        val userRepo by inject<UserRepo>()
+        val noteRepo by inject<NoteRepo>()
+
+        getAuthOperations(userRepo)
+        crudOperations(noteRepo)
+        mainRoute(noteRepo)
+    }
+}
+
+fun Route.mainRoute(noteRepo: NoteRepo) {
+    get("/") {
+        val principal = call.sessions.get<User>()
+        if (principal !== null) {
+            call.respond(ThymeleafContent("index", mapOf("isDev" to true, "user" to principal, "notes" to noteRepo.getNoteByUser(principal))))
+        } else {
+            call.respond(ThymeleafContent("index", mapOf("isDev" to true)))
         }
     }
 }
 
-fun Route.crudOperations() {
+fun Route.crudOperations(noteRepo: NoteRepo) {
     route("/notes") {
         get {
-            call.respond(dao.allNotes())
+            call.respond(noteRepo.allNotes())
         }
 
         post {
             val dto = deserializeJson(call.receive())
             val user = call.sessions.get<User>()
-            val post = dao.addNewNote(dto, user!!.id)
+            val post = noteRepo.addNewNote(dto, user!!.id)
             call.respond(post!!)
         }
 
         put("/{id}") {
             val id = call.parameters.getOrFail<Int>("id").toInt()
             val dto = call.receive<Note>()
-            dao.editNote(dto)
-            call.respond(dao.note(id)!!)
+            noteRepo.editNote(dto)
+            call.respond(noteRepo.note(id)!!)
         }
 
         delete("/{id}") {
             val id = call.parameters.getOrFail<Int>("id").toInt()
-            dao.deleteNote(id)
+            noteRepo.deleteNote(id)
         }
     }
 }
 
-fun Route.getAuthOperations() {
+fun Route.getAuthOperations(userRepo: UserRepo) {
     route("/auth") {
         post("/login") {
             val receive = deserializeJson(call.receive())
@@ -91,26 +99,3 @@ fun Route.getAuthOperations() {
         call.respondRedirect("/")
     }
 }
-
-val dao: NoteRepo = NoteRepoImpl()
-
-var EMAIL_ADDRESS_PATTERN: Pattern = Pattern.compile(
-    "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
-            "\\@" +
-            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
-            "(" +
-            "\\." +
-            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
-            ")+"
-)
-
-fun checkEmail(email: String): Boolean {
-    return EMAIL_ADDRESS_PATTERN.matcher(email).matches();
-}
-
-val userRepo: UserRepo = UserRepoImpl()
-
-fun deserializeJson(json: String): Map<String, String> = gson.fromJson<Map<String, String>>(json, MutableMap::class.java)
-
-
-val gson = Gson()

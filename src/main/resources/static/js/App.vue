@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="element">
     <b-navbar wrapper-class="container" shadow>
       <template #brand>
         <b-navbar-item tag="router-link" :to="{ path: '/' }">
@@ -28,13 +28,41 @@
       </template>
 
       <template v-else #end>
-        <b-navbar-item tag="div">
-          <div class="buttons">
-            <a class="button is-primary" style="width: 26px; height: 30px" href="/logout">
-              <b-icon icon="exit-to-app"></b-icon>
+        <b-dropdown
+            v-model="navigation"
+            position="is-bottom-left"
+            append-to-body
+            aria-role="menu">
+          <template #trigger>
+            <a
+                class="navbar-item"
+                role="button">
+              <b-icon icon="menu"></b-icon>
             </a>
-          </div>
-        </b-navbar-item>
+          </template>
+
+          <b-dropdown-item custom aria-role="menuitem">
+            Logged as <b>{{profile.userName}}</b>
+          </b-dropdown-item>
+          <hr class="dropdown-divider">
+          <b-dropdown-item has-link value="home" aria-role="menuitem">
+            <a href="/">
+              <b-icon icon="home"></b-icon>
+              Home
+            </a>
+          </b-dropdown-item>
+          <hr class="dropdown-divider" aria-role="menuitem">
+          <b-dropdown-item value="settings">
+            <b-icon icon="account"></b-icon>
+            Profile
+          </b-dropdown-item>
+          <b-dropdown-item has-link value="logout" aria-role="menuitem">
+            <a href="/logout">
+              <b-icon icon="logout"></b-icon>
+              Logout
+            </a>
+          </b-dropdown-item>
+        </b-dropdown>
       </template>
     </b-navbar>
     <notifications position="bottom right"/>
@@ -55,12 +83,13 @@ export default {
   data() {
     return {
       login: false,
-      register: false
+      register: false,
+      navigation: "home"
     }
   }
 }
 </script>
 
 <style scoped>
-
+.element::-webkit-scrollbar { width: 0; }
 </style>

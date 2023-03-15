@@ -5,7 +5,7 @@
       <note-card v-for="note in this.allNotes.filter(it => it.isImportant || it.important)"
                  :note="note"/>
     </div>
-    <div class="text-divider"/>
+    <div class="text-divider" v-if="notes.length !== 0"/>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; transform: translateX(37px)">
       <note-card v-for="note in this.allNotes.filter(it => !it.isImportant && !it.important)"
                  :note="note"/>

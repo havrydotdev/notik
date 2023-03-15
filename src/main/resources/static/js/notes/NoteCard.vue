@@ -1,9 +1,9 @@
 <template>
   <div class="mt-2 mb-5">
     <div class="box mr-2 ml-2 red" style="height: 250px; width: 300px; cursor: pointer;" v-if="note.isImportant || note.important">
-      <h3 class="title is-4 mb-5">{{note.title}}</h3>
-      <h5 class="subtitle is-6">{{systemNow()}}</h5>
-      <div class="mt-5" style="min-height: 90px">
+      <h3 class="title is-4 mb-5" @click="alertCustom()">{{note.title}}</h3>
+      <h5 class="subtitle is-6" @click="alertCustom()">{{systemNow()}}</h5>
+      <div class="mt-5" style="min-height: 90px" @click="alertCustom()">
         {{getBody()}}
       </div>
       <div style="margin-left: 160px">
@@ -17,10 +17,10 @@
       </div>
     </div>
 
-    <div class="box mr-2 ml-2" style="height: 250px; width: 300px; cursor: pointer;" v-else>
-      <h3 class="title is-4 mb-5">{{note.title}}</h3>
-      <h5 class="subtitle is-6">{{systemNow()}}</h5>
-      <div class="mt-5" style="min-height: 90px">
+    <div class="box mr-2 ml-2 grey" style="height: 250px; width: 300px; cursor: pointer;" v-else>
+      <h3 class="title is-4 mb-5" @click="alertCustom()">{{note.title}}</h3>
+      <h5 class="subtitle is-6" @click="alertCustom()">{{systemNow()}}</h5>
+      <div class="mt-5" style="min-height: 90px" @click="alertCustom()">
         {{getBody()}}
       </div>
       <div style="margin-left: 160px">
@@ -91,6 +91,13 @@ export default {
     },
     editCurrent(str) {
       this.editNoteAction({id: this.note.id, title: this.note.title, body: str, userId: this.note.userId, isImportant: `${(this.note.important === undefined || this.note.important === null ? this.note.isImportant : this.note.important)}`, creationDate: this.note.creationDate})
+    },
+    alertCustom() {
+      this.$buefy.dialog.confirm({
+        title: this.note.title,
+        message: this.note.body,
+        confirmText: 'Ok'
+      })
     }
   }
 }
@@ -99,5 +106,8 @@ export default {
 <style scoped>
 .red {
   background-color: lightgreen;
+}
+.grey {
+  background-color: #ededed;
 }
 </style>
