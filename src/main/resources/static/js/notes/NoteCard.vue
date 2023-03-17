@@ -1,23 +1,6 @@
 <template>
   <div class="mt-2 mb-5">
-    <div class="box mr-2 ml-2 red" style="height: 250px; width: 300px; cursor: pointer;" v-if="note.isImportant || note.important">
-      <h3 class="title is-4 mb-5" @click="alertCustom()">{{note.title}}</h3>
-      <h5 class="subtitle is-6" @click="alertCustom()">{{systemNow()}}</h5>
-      <div class="mt-5" style="min-height: 90px" @click="alertCustom()">
-        {{getBody()}}
-      </div>
-      <div style="margin-left: 160px">
-        <b-button type="is-link"
-                  icon-right="file-edit"
-                  @click="prompt()"/>
-        <b-button type="is-danger"
-                  icon-right="delete"
-                  class="ml-1"
-                  @click="deleteCurrent()"/>
-      </div>
-    </div>
-
-    <div class="box mr-2 ml-2 grey" style="height: 250px; width: 300px; cursor: pointer;" v-else>
+    <div :class="['box', 'mr-2', 'ml-2', note.isImportant || note.important ? 'green' : 'grey']" style="height: 250px; width: 300px; cursor: pointer;">
       <h3 class="title is-4 mb-5" @click="alertCustom()">{{note.title}}</h3>
       <h5 class="subtitle is-6" @click="alertCustom()">{{systemNow()}}</h5>
       <div class="mt-5" style="min-height: 90px" @click="alertCustom()">
@@ -104,7 +87,7 @@ export default {
 </script>
 
 <style scoped>
-.red {
+.green {
   background-color: lightgreen;
 }
 .grey {
