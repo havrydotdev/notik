@@ -4,9 +4,7 @@ import com.bank.models.JsonError
 import com.bank.models.Note
 import com.bank.models.User
 import com.bank.repository.NoteRepo
-import com.bank.repository.NoteRepoImpl
 import com.bank.repository.UserRepo
-import com.bank.repository.UserRepoImpl
 import com.bank.utils.checkEmail
 import com.bank.utils.deserializeJson
 import io.ktor.server.application.*
@@ -14,7 +12,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import io.ktor.server.thymeleaf.*
 import io.ktor.server.util.*
 import org.koin.ktor.ext.inject
 
@@ -25,18 +22,6 @@ fun Application.configureRouting() {
 
         getAuthOperations(userRepo)
         crudOperations(noteRepo)
-        mainRoute(noteRepo)
-    }
-}
-
-fun Route.mainRoute(noteRepo: NoteRepo) {
-    get("/") {
-        val principal = call.sessions.get<User>()
-        if (principal !== null) {
-            call.respond(ThymeleafContent("index", mapOf("isDev" to true, "user" to principal, "notes" to noteRepo.getNoteByUser(principal))))
-        } else {
-            call.respond(ThymeleafContent("index", mapOf("isDev" to true)))
-        }
     }
 }
 
@@ -97,5 +82,14 @@ fun Route.getAuthOperations(userRepo: UserRepo) {
     get("/logout") {
         call.sessions.clear<User>()
         call.respondRedirect("/")
+    }
+
+    get("/getUser") {
+        val user = call.sessions.get<User>()
+        if (user !== null) {
+            call.respond(user)
+        } else {
+            call.respond(JsonError("Unknown user!", true))
+        }
     }
 }
