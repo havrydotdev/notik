@@ -43,7 +43,6 @@ fun Application.myApplicationModule() {
     DatabaseFactory.init()
     configureSessions()
     configureStatusPages()
-    configureThymeleaf()
     configureKoin()
     configureSerialization()
     configureRouting()
